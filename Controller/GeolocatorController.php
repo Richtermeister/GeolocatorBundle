@@ -54,8 +54,10 @@ class GeolocatorController extends Controller
             'allow_extra_fields' => true,
         ));
         
+        $submit = false;
         foreach ($request->query->all() as $key => $value) {
             if ($form->has($key)) {
+                $submit = true;
                 continue;
             }
             
@@ -65,7 +67,7 @@ class GeolocatorController extends Controller
         }
 
         try {
-            $form->handleRequest($request);
+            $submit && $form->handleRequest($request);
         } catch (QuotaExceeded $e) {
             $this->get('logger')->error($e->getMessage());
             $this->get('session')->getFlashBag()->add('error', 'Sorry, this locator has exceeded the quota for location look-ups. Please try again at a later time.');
